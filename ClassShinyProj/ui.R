@@ -8,60 +8,78 @@ shinyUI(fluidPage(
         # Application title
         titlePanel("WriteWords"),
         br(),
-        tags$h4("Use this application to predict the next word in a phrase.",
+        tags$h5("Use this application to predict the next word in a phrase. Enter a phrase into the box below, if no word is predicted, the phrase <No SWAG> will appear.",
                 style = "color:blue"),
         br(),
-        tags$p(
-                tags$h5("Enter a phrase in the box below.  The search string will display the  
-                         standardized text used for search, and the predicted words will display.") 
-                ),
+        tags$h5("To experiment, try these phrases from NEWS and TWITTER data..."), 
+        tags$h5("...well he picks up on a girl with mcnuggets ...but he's no Aaron"), 
+        tags$h5("...Tufts University #tinnitus (starting with photo of Buffalo"), 
+        tags$h5("...Swanson wrote a letter to Iowa Attorney General Tom Miller, New York Attorney General"), 
         br(),
-        br(),
-        tags$h5("Try these phrases..."), 
-        tags$h5("You're the reason why I smile everyday. Can you follow me please? It would mean the"), 
-        tags$h5("Very early observations on the Bills game: Offense still struggling but the"), 
-        tags$h5("I'm thankful my childhood was filled with imagination and bruises from playing"), 
-
         # Add inputs & output controls   
         sidebarLayout(
                 # Sidebar is for the user input
+                #br(),
                 sidebarPanel(
-                        textInput("text", label =  h3("  "), value = ("Enter phrase...")),
+                        textInput("text", label =  h3("Predict Next!  "), value = (" ")),
                         #actionButton(inputId= "predict", label = "Predict Next!"), 
                         tags$img(height = 100, width = 100, src = "cellphoneimage.jpg")   
                  ),  # end sidebar Panel
                 
                 # Main panel is for where the output will be displayed 
                 mainPanel(
-                        h6("Search string..."),
-                        verbatimTextOutput("text"),
-                      
-                        em("To view the output, navigate through the tabs below.", style = "font-family: 'verdana'; font-si20pt"),
-                        p(" "), 
+                        #h5("Search string..."),
+                        #verbatimTextOutput("text"),
+                        #br(),
+                        h5("Predicted Words (up to 3)..."),
+                        verbatimTextOutput("view"),
+                        tags$img(height = 100, width = 100, src = "cellphoneimage.jpg"),  
+                        br(),
+                        br(),
+                        br(),
+                        em("For information about the app, navigate through the tabs below.", style = "font-family: 'verdana'; font-si20pt"),
+                        br(), 
                         tabsetPanel(type = "tabs", 
-                                    tabPanel("Predicted Word(s)", verbatimTextOutput("view")), 
-                                    tabPanel("Word Cloud", plotOutput("wcloud")), 
-                                    tabPanel("About", 
-                                             tags$strong("This application is a project deliverable from...", 
+                                     tabPanel("About Data", 
+                                        h5("This app was built using Twitter and News data sets.
+                                            To keep the data size footprint small, the Twitter data set was
+                                            sampled at 15% and the News data set at 100%.  The raw data was then standardized by appling a combination
+                                            of steps to remove extra spaces, common words, common swear words, duplicate characters, 
+                                            numbers, and punctuation. "),
+                                        br(),
+                                        h5("Using the TAU package, 3 Ngrams data sets were created (2, 3, and 4).  Only the most common
+                                            word combinations were retained from each of the NGrams: (30,850 4-NGrams, 60,000 3-NGrams, 
+                                            and 130,000 2-Ngrams). The NGram datasets were merged using a data table structure which 
+                                            provides very fast, indexed searches.")
+                                    ), 
+                                    tabPanel("About Design", 
+                                        h5("This app is intended for a mobile phone so the design has been prioritized
+                                                for speed and efficiency. An intentional trade-off has been made between the time
+                                                it takes to display the suggested next word and the volume and size of the app's
+                                                vocabulary. You should expect to see very fast response times for common phrases. 
+                                                For uncommon or unique phrases, there may be no suitable prediction in which case 
+                                                <No S(illy)W(ild)A(ss)G(uess)> will display as output. "),
+                                        br(),
+                                        h5("The algorithm used is an implementation of a simple Katz back-off model described here in: ",
+                                             tags$a(href = "http://en.wikipedia.org/wiki/Katz%27s_back-off_model", "Wikipedia"))
+                                    ), 
+                                    tabPanel("About App", 
+                                             tags$em("This application is a project deliverable from...", 
                                              tags$a(href = "https://www.coursera.org/specialization/jhudatascience/1?utm_medium=listingPage", 
                                                     "Coursera Data Science Certification")),
-                                             br(),
+                                             h5("It is about predicting the next word given a sequence of words. Think about a
+                                                 phrase and then think about what the next word might be.  For instance, if someone
+                                                 says 'Breakfast at...', what is the next word that comes to mind? Examples of 
+                                                 applications that use this approach are spell checkers and search engines. 
+                                                 Amusing examples of predictions from similar apps include: "),
                                              tags$hr(), 
                                              tags$em("        Being able to fit size fourteen shoes is quite a [feet]", style = "color:blue"),
                                              br(),
                                              tags$em("        Chest xtray said it all.  Lungs are full of [rum]", style = "color:blue"), 
                                              br(),
                                              tags$em("        Pizza does not like [buffallo]", style = "color:blue"),         
-                                             br(),
-                                             tags$hr(),
-                                             h5("This project is about predicting the next word in a sequence of words   
-                                                      Think about a phrase  and then think about what the next word is likely to be.  
-                                                      For instance, if someone says 'Cat in the ..'.  What is the next word that comes to mind?   
-                                                      This is the intention of this project:  enter a phrase and the algorithm will attempt to 
-                                                      predict the next word. Examples of applications that use this approach are spell checkers 
-                                                      that suggest a likely alternative to a mis-spelled word or a search engine that is predicting 
-                                                      the rest of a search phrase..."),
-                                             verbatimTextOutput("summary")) 
+                                             br()
+                                             )
                         ) # end tabsetPanel   
                         
                         

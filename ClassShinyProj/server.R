@@ -22,8 +22,9 @@ suppressWarnings(library(data.table))
 #
 ##############################################################
 
-# Read in data table
-myNGrams <- data.table(read.csv("../Data/combinedDT.csv", header=TRUE))
+# Read in data
+myNGrams <- data.table(read.csv("combinedDT.csv", header=TRUE))
+myBlackList <- c("shit", "piss", "fuck", "fucking", "cunt", "cocksucker", "motherfucer", "tits") 
 
 #############################################################
 #
@@ -54,6 +55,9 @@ cleanText <- function(textVector)
         
         # Remove default sop words 
           theCorpus <- tm_map(theCorpus, removeWords, stopwords("english"))
+        
+        # Remove blacklist words 
+          theCorpus = tm_map(theCorpus, removeWords, myBlackList, mc.cores=1)
 
         # Remove numbers 
           theCorpus = tm_map(theCorpus, removeNumbers, mc.cores=1)
@@ -98,12 +102,19 @@ predictNextWord <- function(text) {
         if (nWords == 2) {
                 lookupWords <- paste(words[nWords - 1], words[nWords])
                 result <- as.character(myNGrams[look==lookupWords,output[1:3]])
-                if (is.na(result[1])) {       
-                        result <- c("<Not Available>") 
+                if (is.na(result[1])) {  
+                        if (is.na(result[1])) {     
+                                words <- c(words[nWords])  
+                                nWords = 1
+                        }
                 }
         }
-        if (nWords < 2) {
-                result <- c("<Not Available") 
+        if (nWords == 1) {
+                lookupWords <- words[nWords]
+                result <- as.character(combinedDT[look==lookupWords,output[1:3]])
+                if (is.na(result[1])) {       
+                        result <- c("<No SWAG>") 
+                }
         }
         result
 }     
@@ -115,19 +126,18 @@ predictNextWord <- function(text) {
 ###############################################################
 shinyServer(function(input, output) {
         
-        output$text <- renderText({ 
-                str1 <- cleanText(input$text); 
-        })
-        
+        #output$text <- renderText({ 
+        #        str1 <- cleanText(input$text); 
+        #})
+       
         output$view <- renderText({ 
-                str2 <- predictNextWord(cleanText(input$text));
+                str <- predictNextWord(cleanText(input$text));
+                return(paste("First: ", toupper(str[1]), "    Second: ", toupper(str[2]), "    Third: ", toupper(str[3])));
+                #return(paste("First: ", toupper(toString(str[1])), "   Second: ", toupper(toString(str[2])), "   Third: ", toupper(toString(str[3]));
         })
         
-        output$wcloud <- renderPlot({
-              title <- "Word Cloud for Input Text"
-              wordcloud(myNGrams$look[100:150], 
-                        myNGrams$sum[100:150],c(5,.3),50,
-                        random.order=FALSE,colors=brewer.pal(8, "Dark2")) 
-        })
- 
+        #return (paste("Based on the phrase/sentence/word you entered, the next highly probable word is: ", toupper(toString(nextWord))))    
+        
+        
+        
 })
