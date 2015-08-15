@@ -111,7 +111,7 @@ predictNextWord <- function(text) {
         }
         if (nWords == 1) {
                 lookupWords <- words[nWords]
-                result <- as.character(combinedDT[look==lookupWords,output[1:3]])
+                result <- as.character(myNGrams[look==lookupWords,output[1:3]])
                 if (is.na(result[1])) {       
                         result <- c("<No SWAG>") 
                 }
